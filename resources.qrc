@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>resources/head/ubuntu1_64.png</file>
+        <file>resources/head/ubuntu1_64off.png</file>
+        <file>resources/image/dialog.png</file>
+        <file>resources/image/ubuntu128.png</file>
+        <file>resources/trayIcon/newmsg.png</file>
+        <file>resources/image/about.png</file>
+        <file>resources/image/aboutQt.png</file>
+        <file>resources/image/quit.png</file>
+        <file>resources/image/setting.png</file>
+        <file>resources/image/bug.png</file>
+        <file>resources/trayIcon/staraway32.png</file>
+        <file>resources/trayIcon/staraway128.png</file>
+        <file>resources/trayIcon/starbusy32.png</file>
+        <file>resources/trayIcon/starbusy128.png</file>
+        <file>resources/trayIcon/starcallme32.png</file>
+        <file>resources/trayIcon/starcallme128.png</file>
+        <file>resources/trayIcon/starinvisible32.png</file>
+        <file>resources/trayIcon/starinvisible128.png</file>
+        <file>resources/trayIcon/starquiet32.png</file>
+        <file>resources/trayIcon/starquiet128.png</file>
+        <file>resources/trayIcon/yellowstar32.png</file>
+        <file>resources/trayIcon/yellowstar128.png</file>
+        <file>resources/trayIcon/yellowstaroff128.png</file>
+    </qresource>
+</RCC>
