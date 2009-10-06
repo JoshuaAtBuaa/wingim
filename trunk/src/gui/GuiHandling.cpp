@@ -62,6 +62,8 @@ GuiHandling::GuiHandling(QObject *parent)
 
 	init();
 
+	setSkin();
+
 	//systemTray->showTray();
 	//dialogWindow->show();
 	//mainWindow->show();
@@ -87,7 +89,7 @@ void GuiHandling::init()
 
 void GuiHandling::loginSucceed()
 {
-	wingApp->longUser->setCurrentStatus(WingUser::online);
+	wingApp->wingUser->setCurrentStatus(WingUser::online);
 
 	loginWindow->hide();
 	systemTray->showTray();
@@ -101,7 +103,7 @@ void GuiHandling::loginFailed()
 	                     QObject::tr("Login Failed !"),
 		                       QMessageBox::Ok);
 
-	wingApp->longUser->setCurrentStatus(WingUser::offline);
+	wingApp->wingUser->setCurrentStatus(WingUser::offline);
 	if(loginWindow)
 		loginWindow->loginBtn->setEnabled(true);
 }
@@ -112,7 +114,7 @@ void GuiHandling::needVerify()
 	                     QObject::tr("Need to be verified ! But the function has not be finished.:-("),
 		                       QMessageBox::Ok);
 
-	wingApp->longUser->setCurrentStatus(WingUser::offline);
+	wingApp->wingUser->setCurrentStatus(WingUser::offline);
 	qApp->quit();
 }
 
@@ -125,7 +127,7 @@ void GuiHandling::needActivated()
 								 "http://aq.qq.com/cn/services/abnormal/abnormal_index</a><br/>"),
 						QMessageBox::Ok);
 
-	wingApp->longUser->setCurrentStatus(WingUser::offline);
+	wingApp->wingUser->setCurrentStatus(WingUser::offline);
 	if(loginWindow)
 		loginWindow->loginBtn->setEnabled(true);
 }
@@ -136,7 +138,7 @@ void GuiHandling::passwdError()
 	                     QObject::tr("password error !"),
 		                       QMessageBox::Ok);
 
-	wingApp->longUser->setCurrentStatus(WingUser::offline);
+	wingApp->wingUser->setCurrentStatus(WingUser::offline);
 	if(loginWindow)
 		loginWindow->loginBtn->setEnabled(true);
 }
@@ -147,7 +149,7 @@ void GuiHandling::fallLine()
 	                     QObject::tr("wing has fall line !"),
 		                       QMessageBox::Ok);
 
-	wingApp->longUser->setCurrentStatus(WingUser::offline);
+	wingApp->wingUser->setCurrentStatus(WingUser::offline);
 	dialogWindow->hide();
 	mainWindow->removeAndDeleteAllChildItem();
 	systemTray->hideTray();
@@ -162,7 +164,7 @@ void GuiHandling::logoutRequest()
 	dialogWindow->hide();
 	systemTray->hideTray();
 
-	WingUser::UserStatus currentStatus = wingApp->longUser->getCurrentStatus();
+	WingUser::UserStatus currentStatus = wingApp->wingUser->getCurrentStatus();
 	int i = 2;
 	while(currentStatus != WingUser::offline && i--)
 	{
@@ -201,7 +203,7 @@ void GuiHandling::fetchBuddyList(QMap<unsigned int, BuddyInfo *> buddyList)
 void GuiHandling::fetchUserInfo()
 {
 	QTextCodec::setCodecForLocale(QTextCodec::codecForName("GB18030"));
-	std::string nick = wingApp->longUser->at(WingUser::Info_nick);
+	std::string nick = wingApp->wingUser->at(WingUser::Info_nick);
 	QString nickName = QString::fromLocal8Bit(nick.c_str());
 	mainWindow->nickName->setText(nickName);
 
@@ -363,8 +365,11 @@ void GuiHandling::imFromSms(ReceiveIMPacket *imPacket)
 
 void GuiHandling::changeUserStatus(uint8 status)
 {
+	if(status == wingApp->wingUser->getCurrentStatus())
+		return;
 	OutPacket *outPacket = wingApp->packetBuilder->buildChangeStatusRequestPacket(status);
 	wingApp->packetStorage->appendOutPacket(outPacket);
+	wingApp->wingUser->setCurrentStatus((WingUser::UserStatus)status);
 }
 
 void GuiHandling::palySound()
@@ -386,6 +391,14 @@ void GuiHandling::palySound()
 	QSound ring("../resources/sound/incomingMsg.wav");
 	ring.play();
 #endif
+}
+
+void GuiHandling::setSkin()
+{
+	QFile file(":/resources/skin/default.qss");
+	file.open(QFile::ReadOnly);
+	QString styleSheet = tr(file.readAll());
+	qApp->setStyleSheet(styleSheet);
 }
 
 bool GuiHandling::eventFilter(QObject *target, QEvent *event)

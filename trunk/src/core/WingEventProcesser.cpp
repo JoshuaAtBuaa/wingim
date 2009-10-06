@@ -146,7 +146,7 @@ void WingEventProcesser::processPasswdErrorEvent(WING_EVENT *event)
 
 void WingEventProcesser::processNetInitSucceedEvent(WING_EVENT *event)
 {
-	wingApp->longUser->init();
+	wingApp->wingUser->init();
 	wingApp->loginModule = new LoginModule();
 	wingApp->loginModule->startLogin();
 	SAFE_DELETE(event);
@@ -208,7 +208,7 @@ void WingEventProcesser::processGotUserInfoEvent(WING_EVENT *event)
 {
 	wingApp->guiHandling->fetchUserInfo();
 
-	OutPacket *getUserSig = wingApp->packetBuilder->buildUserSignatureRequestPacket(wingApp->longUser->signature);
+	OutPacket *getUserSig = wingApp->packetBuilder->buildUserSignatureRequestPacket(wingApp->wingUser->signature);
 	wingApp->packetStorage->appendOutPacket(getUserSig);
 
 	SAFE_DELETE(event);
@@ -235,7 +235,7 @@ void WingEventProcesser::processLogoutRequestEvent(WING_EVENT *event)
 	logoutPacket = wingApp->packetBuilder->buildLogoutRequestPacket();
 	wingApp->packetProcesser->processOutPacketSlot(logoutPacket);
 
-	wingApp->longUser->setCurrentStatus(WingUser::offline);
+	wingApp->wingUser->setCurrentStatus(WingUser::offline);
 
 	SAFE_DELETE(event);
 }

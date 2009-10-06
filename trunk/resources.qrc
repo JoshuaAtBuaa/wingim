@@ -23,5 +23,7 @@
         <file>resources/trayIcon/yellowstar32.png</file>
         <file>resources/trayIcon/yellowstar128.png</file>
         <file>resources/trayIcon/yellowstaroff128.png</file>
+        <file>resources/skin/default.qss</file>
+        <file>resources/image/lixiaolong.png</file>
     </qresource>
 </RCC>

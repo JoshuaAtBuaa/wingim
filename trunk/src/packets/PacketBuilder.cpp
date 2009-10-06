@@ -92,7 +92,7 @@ OutPacket *PacketBuilder::buildSessionKeyRequestPacket(InPacket *inPacket)
 {
 	SessionKeyRequestPacketStuff *sessionKeyPacket = new SessionKeyRequestPacketStuff();
 	sessionKeyPacket->fromInPacket(inPacket);
-	sessionKeyPacket->putStatus((uint8)wingApp->longUser->getLoginMode());
+	sessionKeyPacket->putStatus((uint8)wingApp->wingUser->getLoginMode());
 	sessionKeyPacket->process();
 	OutPacket *outPacket = sessionKeyPacket->toOutPacket();
 	SAFE_DELETE(sessionKeyPacket);
@@ -196,7 +196,7 @@ OutPacket *PacketBuilder::buildBuddySignatureRequestPacket()
 	if(isUser)
 	{
 		std::list<Signature> sigList;
-		sigList.push_back(wingApp->longUser->signature);
+		sigList.push_back(wingApp->wingUser->signature);
 		SignatureOpPacket *sigOpPacket = new SignatureOpPacket(SignatureOpPacket::GET_SIGNATURE);
 		sigOpPacket->putSignatureList(sigList);
 		OutPacket *outPacket = sigOpPacket->toOutPacket();
