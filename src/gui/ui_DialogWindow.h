@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'DialogWindow.ui'
 **
-** Created: Tue Oct 6 13:20:50 2009
+** Created: Tue Oct 6 19:46:49 2009
 **      by: Qt User Interface Compiler version 4.5.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -68,11 +68,6 @@ public:
         sizePolicy.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
         tabWidget->setSizePolicy(sizePolicy);
         tabWidget->setContextMenuPolicy(Qt::NoContextMenu);
-        tabWidget->setStyleSheet(QString::fromUtf8("QTabBar::tab \n"
-"{\n"
-"	min-width: 100px;\n"
-"	max-width: 100px;\n"
-"}"));
         tab = new QWidget();
         tab->setObjectName(QString::fromUtf8("tab"));
         tabWidget->addTab(tab, QString());
@@ -117,6 +112,7 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setContentsMargins(-1, 5, -1, -1);
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout->addItem(horizontalSpacer);

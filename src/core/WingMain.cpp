@@ -44,7 +44,7 @@ WingMain::WingMain()
 	packetBuilder = new PacketBuilder();
 	eventProcesser = new WingEventProcesser();
 	netManager = new NetworkManager();
-	longUser = new WingUser();
+	wingUser = new WingUser();
 	packetStorage = new PacketStorage();
 	packetProcesser = new PacketProcesser();
 	buddyManager = new BuddyInfoManager();
@@ -58,7 +58,7 @@ WingMain::~WingMain()
 	SAFE_DELETE(netManager);
 	SAFE_DELETE(packetBuilder);
 	SAFE_DELETE(eventProcesser);
-	SAFE_DELETE(longUser);
+	SAFE_DELETE(wingUser);
 	SAFE_DELETE(buddyManager);
 	SAFE_DELETE(packetStorage);
 	SAFE_DELETE(guiHandling);

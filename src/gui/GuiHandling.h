@@ -126,6 +126,10 @@ public:
 	 */
 	void palySound();
 
+	/*! 设置皮肤
+	 */
+	void setSkin();
+
 protected:
 	/*! 事件过滤器
 	 *  \param obj

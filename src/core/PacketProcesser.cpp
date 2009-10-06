@@ -299,7 +299,7 @@ void PacketProcesser::processGetUserInfoReply(InPacket *inPacket)
 	uint8 *bodyPtr = inPacket->getBody();
 	int bodyLen = inPacket->getBodyLen();
 
-	wingApp->longUser->putData(bodyPtr, bodyLen);
+	wingApp->wingUser->putData(bodyPtr, bodyLen);
 
 	WING_EVENT *gotUserInfo = new WING_EVENT(WING_EVENT::gotUserInfo,"PacketProcesser","receive userinfo!",0);
 	wingApp->eventProcesser->longEventHandling(gotUserInfo);
@@ -479,7 +479,7 @@ void PacketProcesser::processSignatureOpReply(InPacket *inPacket)
 			{
 				Signature sig = sigList.front();
 				wingApp->guiHandling->putNewSignature(sig.signature);
-				wingApp->longUser->signature = sig;
+				wingApp->wingUser->signature = sig;
 			}
 
 		}

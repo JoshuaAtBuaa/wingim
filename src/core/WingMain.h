@@ -60,7 +60,7 @@ public:
 	//好友信息管理
 	BuddyInfoManager *buddyManager;
 	//用户信息
-	WingUser *longUser;
+	WingUser *wingUser;
 
 };
 

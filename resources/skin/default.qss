@@ -1,0 +1,31 @@
+
+QTabBar::tab{
+	min-width: 100px;
+	max-width: 100px;
+}
+
+QLabel#picLabel{
+	background-image: url(:/resources/image/lixiaolong.png);	
+}
+/*
+QWidget#DialogWindow,QWidget#LoginWindow,QWidget#MainWindow
+{
+	
+	background-color: rgb(162, 207, 255);
+}
+
+.QTextEdit
+{
+	background-color: rgb(216, 255, 252);
+}
+
+.QListWidget
+{
+	background-color: rgb(157, 216, 255);
+}
+
+QFrame#frame
+{
+	background-color: rgb(157, 216, 255);
+}
+*/
