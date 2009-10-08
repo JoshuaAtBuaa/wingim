@@ -101,7 +101,7 @@ void WingDialogWindow::onSendButtonClicked()
 	browser->setTextColor(Qt::blue);
 	browser->append("< Me > "+dt.time().toString()+" "+dt.date().toString(Qt::ISODate));
 	browser->setTextColor(Qt::black);
-	browser->append(QString("    ")+outMsg);
+	browser->append(outMsg);
 	QScrollBar *bar = textInput->verticalScrollBar();
 	bar->setValue (bar->maximum ());
 	textInput->clear();

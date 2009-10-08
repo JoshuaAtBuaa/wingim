@@ -29,6 +29,7 @@
 #endif
 
 #include <QUdpSocket>
+#include <QTcpSocket>
 #include "WingMain.h"
 #include "WingDebug.h"
 #include "NetworkManager.h"
@@ -38,34 +39,50 @@
 #include "PacketStorage.h"
 
 NetworkManager::NetworkManager(QObject * parent)
-	:QObject(parent), networkReady(false), dnsOK(false)
+	:QObject(parent),udpSocket(0),tcpSocket(0),localPort(2050),
+	networkReady(false),dnsOK(false),type(UDP)
 {
-	udpSocket = new QUdpSocket(this);
-	uint16 port = 2050;
-	while(!udpSocket->bind(port))
-		port++;
-	//打印调试信息
-	DWHERE();
-	DPRINT("- - - > UdpSocket bind to:%d!", port);
+
 }
 //
 NetworkManager::~NetworkManager()
 {
 	//打印调试信息
 	DWHERE();
+}
 
-	udpSocket->close();
-	SAFE_DELETE(udpSocket);
+void NetworkManager::setNetType(netType t)
+{
+	type = t;
+}
+
+NetworkManager::netType NetworkManager::getNetType()
+{
+	return type;
 }
 //
 bool NetworkManager::DNS()
 {
 	struct hostent *host;
 	char **pp;
-	if(dnsOK)
-		return true;
-	//解释域名 sz8.tencent.com
-	host = gethostbyname("sz8.tencent.com");
+
+#ifdef _WIN32
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	int err;
+	wVersionRequested = MAKEWORD(1, 1);
+	err = WSAStartup(wVersionRequested, &wsaData);
+#endif
+
+	if(type == UDP)
+	{
+		host = gethostbyname("sz8.tencent.com");	//解释域名 sz8.tencent.com
+		//打印调试信息
+		DWHERE();
+	}
+	else
+		host = gethostbyname("tcpconn2.tencent.com");	//解释域名 tcpconn2.tencent.com
+
 	if(!host)
 		return false;
 	pp = host->h_addr_list;
@@ -75,13 +92,21 @@ bool NetworkManager::DNS()
 	unsigned long tempIP = *((unsigned int *)*pp);
 	//把网络序转换成主机序
 	tempIP = ntohl(tempIP);
-	setServerAddress(QHostAddress(tempIP));
-	dnsOK = true;
-	return true;
+	serverAddress.setAddress(tempIP);
+	//打印调试信息
+	DWHERE();
+	DPRINT("- - - > serverAddress has be set:%s",serverAddress.toString().toStdString().c_str());
+
+	return dnsOK = true;
 }
 //
 void NetworkManager::startConnect()
 {
+
+	if(type == UDP)
+		serverPort = 8000;
+	else
+		serverPort = 443;
 
 	for(int i = 0; i < 10; i++)
 		if(DNS())
@@ -95,19 +120,44 @@ void NetworkManager::startConnect()
 		wingApp->eventProcesser->longEventHandling(domainError);
 		return;
 	}
-	connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()));
-	networkReady = true;
+	if(type == UDP)
+	{
+		udpSocket = new QUdpSocket(this);
+		while(!udpSocket->bind(localPort))
+			localPort++;
+		//打印调试信息
+		DWHERE();
+		DPRINT("- - - > UdpSocket bind to:%d!", localPort);
 
-	//网络连接成功
-	WING_EVENT *netOK = new WING_EVENT(WING_EVENT::netInitSucceed,"NetworkManager","network connect succeed!",0);
-	wingApp->eventProcesser->longEventHandling(netOK);
+		connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingData()));
+		networkReady = true;
+
+		//网络连接成功
+		WING_EVENT *netOK = new WING_EVENT(WING_EVENT::netInitSucceed,"NetworkManager","network ucp connect succeed!",0);
+		wingApp->eventProcesser->longEventHandling(netOK);
+	}
+	else
+	{
+		tcpSocket = new QTcpSocket(this);
+		tcpSocket->connectToHost(serverAddress, serverPort);
+		connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(processPendingData()));
+		networkReady = true;
+
+		//网络连接成功
+		WING_EVENT *netOK = new WING_EVENT(WING_EVENT::netInitSucceed,"NetworkManager","network tcp connect succeed!",0);
+		wingApp->eventProcesser->longEventHandling(netOK);
+	}
+
 }
 //
 void NetworkManager::stopConnect()
 {
 	if(networkReady)
 	{
-		disconnect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()));
+		if(type == UDP)
+			disconnect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingData()));
+		else
+			disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(processPendingData()));
 		networkReady = false;
 	}
 }
@@ -119,51 +169,113 @@ bool NetworkManager::isNetworkReady()
 //
 void NetworkManager::send(const uint8 *outStr, int len)
 {
-	int sentLen = 0;
-	sentLen = udpSocket->writeDatagram((const char *)outStr, len, serverAddress, 8000);
-	if(sentLen != len)
+	if(type == UDP)
 	{
-		//打印调试信息
-		DWHERE();
-		DPRINT("- - - > msgdata sent failed");
+		int sentLen = 0;
+		sentLen = udpSocket->writeDatagram((const char *)outStr, len, serverAddress, serverPort);
+		if(sentLen != len)
+		{
+			//打印调试信息
+			DWHERE();
+			DPRINT("- - - > udp msgdata sent failed");
+		}
+		else
+		{
+			//打印调试信息
+			DWHERE();
+			DPRINT("- - - > udp msgdata has be sent! msgLength:%d",len);
+		}
+		SAFE_DELETE_ARRAY(outStr);
 	}
 	else
 	{
-		//打印调试信息
-		DWHERE();
-		DPRINT("- - - > msgdata has be sent! msgLength:%d",len);
+		int sentLen = 0;
+		sentLen = tcpSocket->write((const char *)outStr, len);
+		if(sentLen != len)
+		{
+			//打印调试信息
+			DWHERE();
+			DPRINT("- - - > tcp msgdata sent failed");
+		}
+		else
+		{
+			//打印调试信息
+			DWHERE();
+			DPRINT("- - - > tcp msgdata has be sent! msgLength:%d",len);
+		}
+		SAFE_DELETE_ARRAY(outStr);
 	}
 
-
-	SAFE_DELETE_ARRAY(outStr);
 }
 //设置服务器IP地址
 void NetworkManager::setServerAddress(QHostAddress addr)
 {
 	serverAddress = addr;
+	networkReady = false;
+	if(type != UDP)
+	{
+		if(NULL == tcpSocket)
+		{
+			tcpSocket = new QTcpSocket(this);
+			tcpSocket->connectToHost(serverAddress, serverPort);
+			connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(processPendingData()));
+			networkReady = true;
+		}
+		else if(tcpSocket->isValid())
+		{
+			tcpSocket->close();
+			tcpSocket->connectToHost(serverAddress, serverPort);
+			networkReady = true;
+		}
+		else
+		{}
+
+	}
+	else
+		networkReady = true;
+
 	//打印调试信息
 	DWHERE();
 	DPRINT("- - - > serverAddress has be set:%s",serverAddress.toString().toStdString().c_str());
 }
 //收到信息后执行这个槽
-void NetworkManager::processPendingDatagrams()
+void NetworkManager::processPendingData()
 {
-	//QByteArray datagram;
 	int dataSize = 0;
-	if(udpSocket->hasPendingDatagrams())
+	char *inStr = NULL;
+	if(type == UDP)
 	{
-		dataSize = udpSocket->pendingDatagramSize();
-		char *inStr = new char[dataSize];
-		udpSocket->readDatagram(inStr, dataSize);
+		if(udpSocket->hasPendingDatagrams())
+		{
+			dataSize = udpSocket->pendingDatagramSize();
+			inStr = new char[dataSize];
+			udpSocket->readDatagram(inStr, dataSize);
 
+			//打印调试信息
+			DWHERE();
+			DPRINT("- - - > receive udp msgdata! dataLength:%d",dataSize);
+
+			//判断是不是QQ数据包，以0x02开始，0x03结尾
+			if(inStr[0] == 0x02 && inStr[dataSize-1] == 0x03)
+				wingApp->packetStorage->appendInPacket(inStr, dataSize);
+			else
+				SAFE_DELETE_ARRAY(inStr);
+		}
+	}
+	else
+	{
+		dataSize = tcpSocket->bytesAvailable();
+		inStr = new char[dataSize];
+		tcpSocket->read(inStr, dataSize);
 		//打印调试信息
 		DWHERE();
-		DPRINT("- - - > receive msgdata! dataLength:%d",dataSize);
+		DPRINT("- - - > receive tcp msgdata! dataLength:%d",dataSize);
 
 		//判断是不是QQ数据包，以0x02开始，0x03结尾
-		if(inStr[0] == 0x02 && inStr[dataSize-1] == 0x03)
+		if(inStr[2] == 0x02 && inStr[dataSize-1] == 0x03)
 			wingApp->packetStorage->appendInPacket(inStr, dataSize);
 		else
 			SAFE_DELETE_ARRAY(inStr);
 	}
+
 }

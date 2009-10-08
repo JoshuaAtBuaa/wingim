@@ -79,7 +79,7 @@ void PacketProcesser::processInPacketSlot(InPacket *inPacket)
 	DWHERE();
 	DPRINT("- - - > new inpacket! command:%#x bodyLen:%d",command, inPacket->getBodyLen());
 
-
+/*
 #ifdef QT_DEBUG
 	uint8 *bodyPtr = inPacket->getBody();
 	int bodyLen = inPacket->getBodyLen();
@@ -93,7 +93,7 @@ void PacketProcesser::processInPacketSlot(InPacket *inPacket)
 	fprintf(stderr, "\n");
 	fflush(stderr);
 #endif
-
+*/
 	switch(command)
 	{
 			//处理握手请求应答 0x0091
@@ -159,7 +159,7 @@ void PacketProcesser::processOutPacketSlot(OutPacket *outPacket)
 	//打印调试信息
 	DWHERE();
 	DPRINT("- - - > new outpacket! command:%#x bodyLen:%d",outPacket->getCommand(), (int)outPacket->getBodyLen());
-
+/*
 #ifdef QT_DEBUG
 	uint8 *bodyPtr = outPacket->getBody();
 	int bodyLen = outPacket->getBodyLen();
@@ -173,7 +173,7 @@ void PacketProcesser::processOutPacketSlot(OutPacket *outPacket)
 	fprintf(stderr, "\n");
 	fflush(stderr);
 #endif
-
+*/
 	uint8 *outStr = new uint8[QQ_PACKET_MAX_SIZE]; //65535
 	int len = 0;
 	outPacket->toByteArrary(outStr, &len);

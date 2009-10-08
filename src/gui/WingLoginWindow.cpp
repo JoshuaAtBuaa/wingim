@@ -65,9 +65,12 @@ void WingLoginWindow::init()
 	QValidator *validator_port = new QRegExpValidator(rx_port, this);
 	accInput->setValidator(validator_port);
 
-	statusBox->addItem(trUtf8("online"), 10);
-	statusBox->addItem(trUtf8("invisible"), 40);
-	statusBox->addItem(trUtf8("away"), 30);
+	statusBox->addItem(tr("online"), 10);
+	statusBox->addItem(tr("invisible"), 40);
+	statusBox->addItem(tr("away"), 30);
+
+	netSetBox->addItem(QString("UDP"), 0);
+	netSetBox->addItem(QString("TCP"), 1);
 
 	connect(loginBtn, SIGNAL(clicked()), this, SLOT(onLoginRequest()));
 

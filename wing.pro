@@ -8,7 +8,14 @@ TARGET = wing
 DESTDIR = bin
 UI_DIR = src/gui
 DEFINES += QT_DEBUG
-win32:LIBS += -lws2_32
+win32{
+    CONFIG += console
+    LIBS += -lws2_32
+    RC_FILE = winresources.rc
+}
+RESOURCES += resources.qrc
+TRANSLATIONS = wing_zh.ts
+
 DEPENDPATH += . \
               src/core \
               src/gui \
@@ -119,5 +126,4 @@ SOURCES += src/core/BuddyInfo.cpp \
            src/packets/outPackets/SessionKeyRequestPacketStuff.cpp \
            src/packets/outPackets/SignatureOpPacket.cpp \
            src/packets/outPackets/TouchRequestPacketStuff.cpp
-RESOURCES += resources.qrc
-TRANSLATIONS = wing_zh.ts
+           

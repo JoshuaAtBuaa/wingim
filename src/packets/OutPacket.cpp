@@ -83,29 +83,37 @@ bool OutPacket::ifNeedResend()
 //每个包在发送前，调用这个函数来把包转换成字符序列
 void OutPacket::toByteArrary(uint8 *outStr, int *outStrLen)
 {
-	//先初始化为0
-	*outStrLen = 0;
+
+	if(isUDP())
+		*outStrLen = 0;
+	else
+		*outStrLen = 2;
 
 	//头部
-	copyHead(outStr);
+	copyHead(outStr + *outStrLen);
 	*outStrLen += headLen;
 
 	//脖子部分
 	if(neckLen != 0)
 	{
-		copyNeck(outStr + headLen);
+		copyNeck(outStr + *outStrLen);
 		*outStrLen += neckLen;
 	}
 
 	//身体部分
-	int32 bodyLengthAfterEncrypted;
-	encryptAndCopyBody(outStr + headLen + neckLen, &bodyLengthAfterEncrypted);
-	*outStrLen += bodyLengthAfterEncrypted;
+	int32 bodyLenEncrypted;
+	encryptAndCopyBody(outStr + *outStrLen, &bodyLenEncrypted);
+	*outStrLen += bodyLenEncrypted;
 
 	//QQ包尾标志
 	outStr[*outStrLen] = (uint8) QQ_TAIL_TAG;
 	*outStrLen += 1;
 
+	if(!isUDP())
+	{
+		short tmp = htons(*outStrLen);
+		memcpy(outStr, &tmp, 2);
+	}
 }
 
 //返回脖子长度
