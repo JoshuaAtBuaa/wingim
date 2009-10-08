@@ -27,7 +27,7 @@
 
 
 uint32 Packet::qqNum = 19401127;
-
+bool Packet::mIsUDP = true;
 Packet::Packet()
 	:version(0),command(0),sequence(0)
 {
@@ -36,9 +36,12 @@ Packet::Packet()
 
 Packet::Packet(uint8 *buf, int *len)
 {
-	int pos = 0;
+	int pos;
 
-	pos++;
+	if(mIsUDP)
+		pos = 1;
+	else
+		pos = 3;
 
 	ToolKit::readBufW(buf+pos, version);
 	pos += 2;
@@ -68,7 +71,16 @@ void Packet::setQQNum(const uint32 num)
 {
 	qqNum = num;
 }
-
+//
+void Packet::setUDP(bool t)
+{
+	mIsUDP = t;
+}
+//
+bool Packet::isUDP()
+{
+	return mIsUDP;
+}
 //设置QQ版本
 void Packet::setQQVersion(const uint16 ver)
 {

@@ -29,6 +29,7 @@
 #include <QList>
 #include <QDateTime>
 #include <QProcess>
+#include <QSound>
 #include "GuiHandling.h"
 #include "WingMain.h"
 #include "WingDebug.h"
@@ -95,6 +96,23 @@ void GuiHandling::loginSucceed()
 	systemTray->showTray();
 	mainWindow->show();
 	SAFE_DELETE(loginWindow);
+}
+
+uint32 GuiHandling::getLoginQQ()
+{
+	return loginWindow->accInput->text().toULong();
+}
+
+WingUser::UserStatus GuiHandling::getStatusSetting()
+{
+	int currentIndex = loginWindow->statusBox->currentIndex();
+	return (WingUser::UserStatus)loginWindow->statusBox->itemData(currentIndex).toUInt();
+}
+
+int GuiHandling::getNetTypeSetting()
+{
+	int currentIndex = loginWindow->netSetBox->currentIndex();
+	return loginWindow->netSetBox->itemData(currentIndex).toInt();
 }
 
 void GuiHandling::loginFailed()
@@ -282,7 +300,7 @@ void GuiHandling::imFromUser(ReceiveIMPacket *imPacket)
 		item->msgBrowser->setTextColor(Qt::darkGreen);
 		item->msgBrowser->append(QString("<")+item->text(0)+"> "+dt.time().toString()+" "+dt.date().toString(Qt::ISODate));
 		item->msgBrowser->setTextColor(Qt::black);
-		item->msgBrowser->append(QString("    ")+inMsg);
+		item->msgBrowser->append(inMsg);
 		QScrollBar *bar = item->msgBrowser->verticalScrollBar ();
 		bar->setValue(bar->maximum ());
 
@@ -330,7 +348,7 @@ void GuiHandling::imFromSys(ReceiveIMPacket *imPacket)
 	sysMsgBrowser->setTextColor(Qt::darkGreen);
 	sysMsgBrowser->append(QString("<")+QObject::tr("10000")+"> "+dt.time().toString()+" "+dt.date().toString(Qt::ISODate));
 	sysMsgBrowser->setTextColor(Qt::black);
-	sysMsgBrowser->append(QString("    ")+inMsg);
+	sysMsgBrowser->append(inMsg);
 	QScrollBar *bar = sysMsgBrowser->verticalScrollBar ();
 	bar->setValue(bar->maximum ());
 
@@ -397,7 +415,7 @@ void GuiHandling::setSkin()
 {
 	QFile file(":/resources/skin/default.qss");
 	file.open(QFile::ReadOnly);
-	QString styleSheet = tr(file.readAll());
+	QString styleSheet = QString::fromUtf8(file.readAll());
 	qApp->setStyleSheet(styleSheet);
 }
 

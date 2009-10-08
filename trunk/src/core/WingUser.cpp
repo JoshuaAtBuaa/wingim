@@ -29,7 +29,6 @@
 #include "WingDebug.h"
 #include "WingMain.h"
 #include "GuiHandling.h"
-#include "WingLoginWindow.h"
 
 
 WingUser::WingUser()
@@ -74,13 +73,12 @@ WingUser::UserStatus WingUser::getCurrentStatus()
 void WingUser::init()
 {
 	//取得帐号
-	unsigned int qqNum = wingApp->guiHandling->loginWindow->accInput->text().toULong();
+	unsigned int qqNum = wingApp->guiHandling->getLoginQQ();
 	Packet::setQQNum(qqNum);
 	signature.qqNum = qqNum;
 
 	//取得状态
-	int currentIndex = wingApp->guiHandling->loginWindow->statusBox->currentIndex();
-	loginMode = (WingUser::UserStatus)wingApp->guiHandling->loginWindow->statusBox->itemData(currentIndex).toUInt();
+	loginMode = (WingUser::UserStatus)wingApp->guiHandling->getStatusSetting();
 }
 
 void WingUser::putData(const unsigned char *buf, const int len)

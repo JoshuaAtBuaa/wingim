@@ -31,15 +31,29 @@
 
 
 class QUdpSocket;
+class QTcpSocket;
 class NetworkManager:public QObject
 {
   Q_OBJECT
 public:
+	enum netType{
+	  UDP,	/*!< DUP连接方式 */
+	  TCP	/*!< TCP连接方式 */
+	};
 	/*! 构造函数 */
 	NetworkManager(QObject * parent = NULL);
 
 	/*! 释构函数 */
 	~NetworkManager();
+
+	/*! 设置网络连接方式 UDP或TCP
+	 * \param t
+	 */
+	void setNetType(netType t);
+
+	/*! 获取网络连接方式
+	 */
+	netType getNetType();
 
 	/*! 发送数据
 	 * \param outStr 一个字符串指针，指向输出缓冲区。
@@ -71,16 +85,20 @@ public slots:
 
 	/*! 收到数据后执行这个槽
 	 */
-	void processPendingDatagrams();
+	void processPendingData();
 
 private:
 	/*! udp套接字
 	 * 在整个程序的运行过程中，都用这个套接字来发送接收包 。
 	 */
-	QUdpSocket * udpSocket;
+	QUdpSocket *udpSocket;
+	QTcpSocket *tcpSocket;
 	QHostAddress serverAddress;	/*!< 服务器IP地址  */
+	uint16 serverPort;
+	uint16 localPort;
 	bool networkReady;		/*!< 网络是否准备好  */
 	bool dnsOK;			/*!< 是否已成功解释域名  */
+	enum netType type;	/*!< 网络连接方式  */
 };
 
 /*! \class NetworkManager

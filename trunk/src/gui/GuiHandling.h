@@ -28,6 +28,7 @@
 #include <QMap>
 #include <string>
 #include "Wingdefines.h"
+#include "WingUser.h"
 
 class BuddyInfo;
 class ReceiveIMPacket;
@@ -48,6 +49,18 @@ public:
 	/*! 初始化
 	 */
 	void init();
+
+	/*! 取得登陆QQ
+	 */
+	uint32 getLoginQQ();
+
+	/*! 取得登陆状态设置
+	 */
+	WingUser::UserStatus getStatusSetting();
+
+	/*! 取得网络类型设置
+	 */
+	int getNetTypeSetting();
 
 	/*! 登陆成功
 	 */

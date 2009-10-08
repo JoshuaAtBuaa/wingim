@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'LoginWindow.ui'
 **
-** Created: Tue Oct 6 13:20:50 2009
+** Created: Thu Oct 8 16:25:11 2009
 **      by: Qt User Interface Compiler version 4.5.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -35,6 +35,7 @@ public:
     QCheckBox *remeberBox;
     QPushButton *loginBtn;
     QLabel *picLabel;
+    QComboBox *netSetBox;
 
     void setupUi(QWidget *LoginWindow)
     {
@@ -91,6 +92,9 @@ public:
         picLabel = new QLabel(LoginWindow);
         picLabel->setObjectName(QString::fromUtf8("picLabel"));
         picLabel->setGeometry(QRect(18, 10, 340, 100));
+        netSetBox = new QComboBox(LoginWindow);
+        netSetBox->setObjectName(QString::fromUtf8("netSetBox"));
+        netSetBox->setGeometry(QRect(30, 232, 55, 22));
         QWidget::setTabOrder(accInput, statusBox);
         QWidget::setTabOrder(statusBox, pwdInput);
         QWidget::setTabOrder(pwdInput, remeberBox);

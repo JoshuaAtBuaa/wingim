@@ -41,6 +41,10 @@ public:
 	static void setQQNum(const uint32 num);
 	//获取QQ号码
 	static uint32 getQQNum();
+	//
+	static void setUDP(bool t);
+	//
+	static bool isUDP();
 	//设置QQ版本
 	void setQQVersion(const uint16 ver);
 	//设置命令字
@@ -64,6 +68,8 @@ protected:
 	uint16 sequence;
 	//QQ号码
 	static uint32 qqNum;
+	//
+	static bool mIsUDP;
 
 };
 

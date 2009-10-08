@@ -122,6 +122,16 @@ void WingEventProcesser::longEventHandlingSlot(WING_EVENT *event)
 
 void WingEventProcesser::processLoginRequestEvent(WING_EVENT *event)
 {
+	if(wingApp->guiHandling->getNetTypeSetting() == 0)
+	{
+		Packet::setUDP(true);
+		wingApp->netManager->setNetType(NetworkManager::UDP);
+	}
+	else
+	{
+		Packet::setUDP(false);
+		wingApp->netManager->setNetType(NetworkManager::TCP);
+	}
 	wingApp->netManager->startConnect();
 	SAFE_DELETE(event);
 }

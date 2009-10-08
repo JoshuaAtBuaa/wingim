@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'DialogWindow.ui'
 **
-** Created: Tue Oct 6 19:46:49 2009
+** Created: Thu Oct 8 16:25:11 2009
 **      by: Qt User Interface Compiler version 4.5.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
